@@ -49,7 +49,7 @@ k_HO2NO = KNOHO2(T,M);
 k_RO2HO2 = 8e-12; % from Paul Romer
 k_RO2RO2 = 6.8e-14; % from Paul Romer
 
-tau_hno3 = nox ./ (k_OHNO2 .* oh .* no2 .* 3600).^-1; % convert to hours
+tau_hno3 = nox ./ (k_OHNO2 .* oh .* no2 .* 3600); % convert to hours
 % tau_ans = 1 / (alpha * k_RO2+NO * [RO2])
 % From Murphy 2006, ACPD, we assume some effective k_RO2_NO (k2eff) that is
 % the weighted average of k's for various RO2+NO reactions. [RO2] is
