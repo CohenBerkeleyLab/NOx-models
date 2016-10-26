@@ -7,7 +7,7 @@ function [ oh ] = nonlin_nox_analytic_model( nox, varargin )
 %   given in Table 4 of Murphy for the various parameters, but each one can
 %   be overridden by the following parameter arguments:
 %
-%       'phox' = production of HOx, default = 2.25 ppb/hr = 6.25e6 molec.
+%       'phox' = production of HOx, default = 1.25 ppb/hr = 6.25e6 molec.
 %           cm^-3 s^-1 assuming number density of air is 2e19 molec. cm^-3
 %       'vocr' = k1*[VOC] i.e. VOC reactivity with OH, default = 5.8 s^-1
 %       'alpha' = RONO2 branching ratio, default = 0.04.

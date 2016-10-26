@@ -1,6 +1,23 @@
 function [ tau, tau_hno3, tau_ans ] = nox_lifetime( varargin )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%NOX_LIFETIME Calculate NOx lifetime under given conditions
+%   [ TAU, TAU_HNO3, TAU_ANS ] = NOX_LIFETIME( NOX ) computes the overall
+%   lifetime, lifetime w.r.t. HNO3, and lifetime w.r.t. alkyl nitrates (in
+%   hours) for the given concentration of NOx in molec. cm^-3.
+%
+%   Other conditions can be set by the following parameters:
+%       'phox' = production of HOx in molec. cm^-3 s^-1. Default is 6.25e6.
+%       'vocr' = VOC reactivity in s^-1. Default is 5.8.
+%       'alpha' = alpha value (branching ratio) for RO2+NO reaction.
+%          Default is 0.04.
+%       'no2_no' = ratio of NO2 to NO. Default is 4.
+%       'k4' = rate constant for reaction of OH + NO2 --> HNO3, default =
+%           1.1e-11 s^-1 cm^3 molec.^-1
+%       'k2eff' = effective reaction rate of NO with RO2 and HO2, default =
+%       8e-12 s^-1 cm^3 molec.^-1. Only used to compute the effective rate
+%       for reaction of all RO2s with NO by solving k2eff = (k_RO2NO +
+%       k_HO2NO)/2, since the assumption made to get this value in Murphy
+%       2006 is that [HO2] = [RO2]
+
 
 p = inputParser;
 p.addOptional('nox', logspace(-11,-7,1000)*2e19, @(x) (isvector(x) && isnumeric(x)));
@@ -39,7 +56,7 @@ addpath(fullfile(HOME,'Documents','MATLAB','Rates'));
 no = 1/(no2_no + 1) * nox;
 no2 = no2_no/(no2_no + 1) * nox;
 
-k_OHNO2 = KOHNO2a(T,M);
+k_OHNO2 = k4;
 k_HO2NO = KNOHO2(T,M);
 k_RO2HO2 = 8e-12; % from Paul Romer
 k_RO2RO2 = 6.8e-14; % from Paul Romer
