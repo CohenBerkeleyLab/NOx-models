@@ -29,7 +29,12 @@ if numel(args)>0 && ~ischar(args{1})
     args = args(2:end);
 end
 
-oh = nonlin_nox_analytic_model(nox, args{:});
+oh = nan(size(nox));
+ho2 = nan(size(nox));
+ro2 = nan(size(nox));
+for a=1:numel(nox)
+    [oh(a), ho2(a), ro2(a)] = hox_ss_solver(nox(a), phox, vocr, alpha);
+end
 
 T = 298; % kelvin
 M = 2e19; % molec. cm^-3
@@ -43,8 +48,6 @@ k_OHNO2 = KOHNO2a(T,M);
 k_HO2NO = KNOHO2(T,M);
 k_RO2HO2 = 8e-12; % from Paul Romer
 k_RO2RO2 = 6.8e-14; % from Paul Romer
-ro2 = vocr .* oh ./ (k_HO2NO .* no);
-ho2 = ro2;
 
 tau_hno3 = nox ./ (k_OHNO2 .* oh .* no2 .* 3600).^-1; % convert to hours
 % tau_ans = 1 / (alpha * k_RO2+NO * [RO2])
@@ -68,13 +71,7 @@ tau_hno3 = nox ./ (k_OHNO2 .* oh .* no2 .* 3600).^-1; % convert to hours
 %   k2_eff = ( C*k_HO2+NO + C*k_RO2+NO ) / 2C 
 % => 2*k2_eff - k_HO2+NO = k_RO2+NO
 k_RO2NO = 2*k2eff - k_HO2NO;
-f_NO = no ./ ( no + k_RO2HO2 / k_RO2NO .* ho2 );
-tau_ans = nox .* k_HO2NO ./ (alpha .* k_RO2NO .* vocr .* oh .* 3600);
-% tau_ans = nox ./ (vocr .* oh .* f_NO .* alpha .* 3600);
-% denom = (alpha .* k_RO2NO .* no .* vocr .* oh .* 3600);
-% tau_ans2 = nox .* (k_RO2NO .* no + k_RO2HO2 .* ho2) ./ (alpha .* k_RO2NO .* no .* vocr .* oh .* 3600);
-% a1 = nox .* (k_RO2NO .* no) ./ denom;
-% a2 = nox .* (k_RO2HO2 .* ho2) ./denom;
+tau_ans = nox ./ (alpha .* k_RO2NO .* ro2 .* no .* 3600);
 
 tau = (1./tau_hno3 + 1./tau_ans).^(-1);
 
