@@ -1,6 +1,29 @@
 function [ oh_nd, ho2_nd, ro2_nd ] = hox_ss_solver( nox, phox, vocr, alpha )
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%HOX_SS_SOLVER Solves for [OH], [HO2], and [RO2] assuming each in steady state
+%   [ OH, HO2, RO2 ] = HOX_SS_SOLVER( NOX, PHOX, VOCR, ALPHA ) will compute
+%   and return the concentrations of OH, HO2, and RO2 in molec. cm^-3 for
+%   the given conditions. 
+%       NOX = [NOx] in molec. cm^-3
+%       PHOX = production of HOx in molec. cm^-3 s^-1.
+%       VOCR = VOC reactivity in s^-1
+%       ALPHA = alpha value (branching ratio) for RO2 + NO -> RONO2
+%       (unitless).
+
+E = JLLErrors;
+
+narginchk(4,4);
+inok = false(nargin,1);
+inok(1) = isscalar(nox) && ~isnumeric(nox) && nox >= 0;
+inok(2) = isscalar(phox) && ~isnumeric(phox) && phox >= 0;
+inok(3) = isscalar(vocr) && ~isnumeric(vocr) && vocr >= 0;
+inok(4) = isscalar(alpha) && ~isnumeric(alpha) && alpha >= 0;
+
+if ~all(inok)
+    E.badinput('All inputs must be positive, scalar numbers')
+end
+if alpha > 1 || alpha < 0
+    E.badinput('ALPHA should be between 0 and 1')
+end
 
 HOME=getenv('HOME');
 addpath(fullfile(HOME,'Documents','MATLAB','Rates'));
@@ -37,6 +60,11 @@ for a=1:numel(test_mat)
 end
 
 xx = all(pp & rr,2);
+if sum(xx) > 1
+    warning('Multiple valid solutions found for conditions [NOx] = %.2g, P(HOx) = %.3f, VOCR = %.2f, alpha = %.3f', nox, phox, vocr, alpha);
+elseif sum(xx) < 1
+    E.nosoln(sprintf('[NOx] = %.2g, P(HOx) = %.3f, VOCR = %.2f, alpha = %.3f', nox, phox, vocr, alpha));
+end
 ho2_nd = ho2_nd(xx);
 ro2_nd = ro2_nd(xx);
 oh_nd = oh_nd(xx);
