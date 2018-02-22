@@ -13,10 +13,10 @@ E = JLLErrors;
 
 narginchk(4,4);
 inok = false(nargin,1);
-inok(1) = isscalar(nox) && ~isnumeric(nox) && nox >= 0;
-inok(2) = isscalar(phox) && ~isnumeric(phox) && phox >= 0;
-inok(3) = isscalar(vocr) && ~isnumeric(vocr) && vocr >= 0;
-inok(4) = isscalar(alpha) && ~isnumeric(alpha) && alpha >= 0;
+inok(1) = isscalar(nox) && isnumeric(nox) && nox >= 0;
+inok(2) = isscalar(phox) && isnumeric(phox) && phox >= 0;
+inok(3) = isscalar(vocr) && isnumeric(vocr) && vocr >= 0;
+inok(4) = isscalar(alpha) && isnumeric(alpha) && alpha >= 0;
 
 if ~all(inok)
     E.badinput('All inputs must be positive, scalar numbers')
@@ -27,6 +27,7 @@ end
 
 HOME=getenv('HOME');
 addpath(fullfile(HOME,'Documents','MATLAB','Rates'));
+addpath('Rates')
 
 T = 298;
 M = 2e19;
@@ -43,9 +44,9 @@ no2 = 0.8*nox;
 
 syms ro2 ho2 oh
 
-eqns = [ho2 == (k_RO2NO * ro2 * no) / (k_HO2NO * no + k_HO2HO2 * ho2 + k_RO2HO2 * ro2),...
-        ro2 == (vocr * oh) / (k_RO2NO * no + k_RO2HO2 * ho2 + k_RO2RO2 * ro2),...
-        phox == k_OHNO2 * oh * no2 + alpha * k_RO2NO * ro2 * no + k_RO2HO2 * ro2 * ho2 * k_RO2RO2 * ro2.^2 + k_HO2HO2 * ho2.^2];
+eqns = [ho2 == (k_RO2NO * ro2 * no * (1-alpha) ) / (k_HO2NO * no + k_HO2HO2 * ho2 + k_RO2HO2 * ro2),...
+        ro2 == (vocr * oh) / (k_RO2NO * no + k_RO2HO2 * ho2 + 2 * k_RO2RO2 * ro2),...
+        phox == k_OHNO2 * oh * no2 + alpha * k_RO2NO * ro2 * no + 2 * k_RO2HO2 * ro2 * ho2 + 2 * k_RO2RO2 * ro2.^2 + 2 * k_HO2HO2 * ho2.^2];
 
     
 S = vpasolve(eqns, [ho2, ro2, oh]);
