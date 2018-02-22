@@ -31,6 +31,7 @@ addpath('Rates')
 
 T = 298;
 M = 2e19;
+pptMolec = M/1e12;
 
 k_RO2NO = 8e-12; % approximate guess
 k_HO2NO = KNOHO2(T,M);
@@ -41,6 +42,18 @@ k_OHNO2 = KOHNO2a(T,M);
 
 no = 0.2*nox;
 no2 = 0.8*nox;
+
+
+%Some unit conversions to try to help with numeric stability
+no  = no./pptMolec;
+no2 =no2./pptMolec;
+phox = phox./pptMolec;
+k_RO2NO = k_RO2NO.*pptMolec;
+k_HO2NO = k_HO2NO.*pptMolec;
+k_HO2HO2 = k_HO2HO2.*pptMolec;
+k_RO2HO2 = k_RO2HO2.*pptMolec;
+k_RO2RO2 = k_RO2RO2.*pptMolec;
+k_OHNO2 = k_OHNO2.*pptMolec;
 
 syms ro2 ho2 oh
 
@@ -53,6 +66,12 @@ S = vpasolve(eqns, [ho2, ro2, oh]);
 ho2_nd = double(S.ho2);
 ro2_nd = double(S.ro2);
 oh_nd = double(S.oh);
+
+%And some post-solving unit conversion to get them back in molec/cc
+ho2_nd = ho2_nd.*pptMolec;
+ro2_nd = ro2_nd.*pptMolec;
+oh_nd  = oh_nd.*pptMolec;
+
 test_mat = [ho2_nd, ro2_nd, oh_nd];
 rr = false(size(test_mat));
 pp = real(test_mat) > 0;
