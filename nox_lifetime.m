@@ -1,4 +1,4 @@
-function [ tau, tau_hno3, tau_ans ] = nox_lifetime( varargin )
+function [ tau, tau_hno3, tau_ans, nox, species ] = nox_lifetime( varargin )
 %NOX_LIFETIME Calculate NOx lifetime under given conditions
 %   [ TAU, TAU_HNO3, TAU_ANS ] = NOX_LIFETIME( NOX ) computes the overall
 %   lifetime, lifetime w.r.t. HNO3, and lifetime w.r.t. alkyl nitrates (in
@@ -20,7 +20,7 @@ function [ tau, tau_hno3, tau_ans ] = nox_lifetime( varargin )
 
 
 p = inputParser;
-p.addOptional('nox', logspace(-11,-7,1000)*2e19, @(x) (isvector(x) && isnumeric(x)));
+p.addOptional('nox', logspace(-11,-7,100)*2e19, @(x) (isvector(x) && isnumeric(x)));
 p.addParameter('phox', 6.25e6, @(x) (isscalar(x) && isnumeric(x)));
 p.addParameter('vocr', 5.8,  @(x) (isscalar(x) && isnumeric(x)));
 p.addParameter('alpha', 0.04,  @(x) (isscalar(x) && isnumeric(x)));
@@ -91,6 +91,6 @@ k_RO2NO = 2*k2eff - k_HO2NO;
 tau_ans = nox ./ (alpha .* k_RO2NO .* ro2 .* no .* 3600);
 
 tau = (1./tau_hno3 + 1./tau_ans).^(-1);
-
+species = struct('oh', oh, 'ho2', ho2, 'ro2', ro2);
 end
 
