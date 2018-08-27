@@ -27,7 +27,6 @@ end
 
 HOME=getenv('HOME');
 addpath(fullfile(HOME,'Documents','MATLAB','Rates'));
-addpath('Rates')
 
 T = 298;
 M = 2e19;
