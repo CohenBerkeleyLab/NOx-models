@@ -22,15 +22,19 @@ function [wkday, wkend, history] = hox_solve_wkday_wkend_constraint(nox_ratio, t
 %       cm^-3 and vocr in s^-1.
 %
 %   Parameters:
+%       'nox_initial' - initial NOx concentration, in ppb, to use in the
+%       solver.
 %
 %       'fmincon_debug' - controls how much printing to the console fmincon
 %       does. Default is 'none', other options are 'final' and 'iter'.
 
 p = advInputParser;
+p.addParameter('nox_initial', 5);
 p.addParameter('fmincon_debug', 'none');
 p.parse(varargin{:});
 pout = p.Results;
 
+nox_initial = pout.nox_initial;
 fmincon_debug = pout.fmincon_debug;
 
 % It seems like fmincon struggles when the two variables have very
@@ -46,7 +50,7 @@ history.x = [];
 opts = optimoptions('fmincon','Display',fmincon_debug,'OutputFcn',@outfun);
 
 % assume 5 ppb weekday NOx and VOCR = 1 to start
-x0 = [5, 1]; 
+x0 = [nox_initial, 1]; 
 % Ax <= b: require that NOx >= 0 and VOCR >= 0.5. 
 A = diag([-1 -1]); 
 b = [0; 0];
