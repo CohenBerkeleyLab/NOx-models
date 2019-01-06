@@ -1,4 +1,4 @@
-function [oh, ho2, ro2, vocr_soln] = hox_solve_tau_constraint(nox, phox, tau, alpha, varargin)
+function [oh, ho2, ro2, vocr_soln, tau_soln] = hox_solve_tau_constraint(nox, phox, tau, alpha, varargin)
 % HOX_SOLVE_TAU_CONSTRAINT Solve for OH, HO2, RO2, and VOCR given NOx, PHOx, alpha, and total NOx lifetime.
 %
 %   [ OH, HO2, RO2, VOCR ] = HOX_SOLVE_TAU_CONSTRAINT( NOX, PHOX, TAU,
@@ -27,7 +27,7 @@ opts = optimoptions('fmincon','Display',fmincon_debug,'OutputFcn',@outfun);
 
 vocr_soln = fmincon(cost_fxn, 1, -1, 0,[],[],[],[],[], opts);%, -1, 0);
 [oh, ho2, ro2] = hox_ss_solver(nox, phox, vocr_soln, alpha);
-
+tau_soln = nox_lifetime(nox, 'phox', phox, 'alpha', alpha, 'vocr', vocr_soln);
 
     function stop = outfun(x,optimvals,state)
         stop = false;

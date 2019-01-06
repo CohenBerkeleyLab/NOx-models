@@ -62,9 +62,12 @@ nox_soln = soln(1) * ppb2numdens;
 vocr_soln = soln(2);
 
 [oh, ho2, ro2] = hox_ss_solver(nox_soln, phox, vocr_soln, alpha);
-wkday = struct('nox', nox_soln, 'oh', oh, 'ho2', ho2, 'ro2', ro2, 'vocr', vocr_soln);
+tau_soln = nox_lifetime(nox_soln, 'phox', phox, 'alpha', alpha, 'vocr', vocr_soln);
+wkday = struct('nox', nox_soln, 'oh', oh, 'ho2', ho2, 'ro2', ro2, 'vocr', vocr_soln, 'tau', tau_soln);
+
 [oh, ho2, ro2] = hox_ss_solver(nox_soln * nox_ratio, phox, vocr_soln, alpha);
-wkend = struct('nox', nox_soln * nox_ratio, 'oh', oh, 'ho2', ho2, 'ro2', ro2, 'vocr', vocr_soln);
+tau_soln = nox_lifetime(nox_soln * nox_ratio, 'phox', phox, 'alpha', alpha, 'vocr', vocr_soln);
+wkend = struct('nox', nox_soln * nox_ratio, 'oh', oh, 'ho2', ho2, 'ro2', ro2, 'vocr', vocr_soln, 'tau', tau_soln);
 
 
     function stop = outfun(x,optimvals,state)
