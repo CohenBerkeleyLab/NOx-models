@@ -26,9 +26,10 @@ last_hcho = nan;
 history.x = [];
 opts = optimoptions('fmincon','Display',fmincon_debug,'OutputFcn',@outfun);
 
-fmin_out = fmincon(@cost_fxn, x0, [], [], [], [], lb, ub, [], opts);%, -1, 0);
+[fmin_out, ~, fmin_flag] = fmincon(@cost_fxn, x0, [], [], [], [], lb, ub, [], opts);%, -1, 0);
 soln = struct('vocr', fmin_out(1), 'phox', fmin_out(2) .* phox_convert,...
-    'alpha', alpha, 'tau', [], 'last_hcho', last_hcho, 'last_tau', last_tau);
+    'alpha', alpha, 'tau', [], 'last_hcho', last_hcho, 'last_tau', last_tau,...
+    'fmincon_flag', fmin_flag);
 
 [oh, ho2, ro2] = hox_ss_solver(nox, soln.phox, soln.vocr, soln.alpha);
 soln.tau = nox_lifetime(nox, 'phox', soln.phox, 'alpha', soln.alpha, 'vocr', soln.vocr);
