@@ -17,7 +17,7 @@ phox_init = 6.25e6;
 % values are vastly different orders of magnitude.
 phox_convert = 2e19*1e-12;
 lb = zeros(2,1);
-ub = Inf(2,1);
+ub = [100; 1e9]; % these values are high enough that no realistic atmosphere should reach them, but they should keep the solver in check
 
 x0 = [vocr_init; phox_init ./ phox_convert];
 
