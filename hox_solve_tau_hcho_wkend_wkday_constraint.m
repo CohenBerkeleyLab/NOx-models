@@ -1,4 +1,4 @@
-function [wkday_soln, wkend_soln] = hox_solve_tau_hcho_wkend_wkday_constraint(wkday_nox, wkday_tau, wkend_nox, wkend_tau, hcho, alpha, varargin)
+function [wkday_soln, wkend_soln] = hox_solve_tau_hcho_wkend_wkday_constraint(wkday_nox, wkday_tau, wkday_hcho, wkend_nox, wkend_tau, wkend_hcho, alpha, varargin)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 p = advInputParser;
@@ -66,7 +66,7 @@ wkend_soln.tau = nox_lifetime(wkend_nox, 'phox', wkend_soln.phox, 'alpha', wkend
         % lifetime cost.
         last_wkday_hcho = hcho_steady_state(vocr, wkday_phox);
         last_wkend_hcho = hcho_steady_state(vocr, wkend_phox);
-        hcho_cost =  (last_wkday_hcho - hcho).^2 + (last_wkend_hcho - hcho).^2;
+        hcho_cost =  (last_wkday_hcho - wkday_hcho).^2 + (last_wkend_hcho - wkend_hcho).^2;
         cost = lifetime_cost + hcho_cost .* 1e9.^2 ./ 2e19.^2;
     end
 
